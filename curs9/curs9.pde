@@ -6,6 +6,7 @@ int[] food = new int[2];
 int lungime = 22;
 int direction = 3; // 0 - SUS, 1 - STANGA, 2 - JOS, 3 - DREAPTA
 
+
 void setup() {
   size(1020, 760, P2D);
 
@@ -15,11 +16,23 @@ void setup() {
     x[lungime-i-1] = 10+20*i;
     y[lungime-i-1] = 10;
   }
+  generateFood();
 }
 
 void draw() {
   background(0);
-
+  
+  stroke(255);
+  for(int i = 0; i<51;i++) {
+    line(i*20, 0, i*20, height);
+  }
+  
+  for(int i = 0; i<38;i++) {
+    line(0, i*20, width, i*20);
+  }
+  
+  stroke(0);
+  
   //START MUTAT SARPE
   for (int i=lungime-2; i >= 0; i--) {
     x[i+1] = x[i];
@@ -52,6 +65,9 @@ void draw() {
 
     circle(x[i], y[i], 20);
   }
+  
+  fill(255,0,0);
+  circle(food[0],food[1],20);
   //END DESENAT SARPE
 }
 
@@ -81,9 +97,31 @@ void keyPressed() {
 }
 
 void generateFood() {
+  int patrate_x = width/20;
+  int patrate_y = height/20;
+  
+  int random_x = int(random(0,patrate_x));
+  int random_y = int(random(0,patrate_y));
+  
+  food[0] = random_x*20 + 10;
+  food[1] = random_y*20 + 10;
+}
+
+void generateFoodWithoutCollision() {
+  boolean generateAgain;
+  generateFood();
+  for(int i = 0; i <= lungime; i++) {
+    if(isCollision(x[i],y[i], food[0], food[1])) {
+      generateAgain = true;
+      break;
+    } 
+  }
   
 }
 
+boolean isCollision(int x1, int y1, int x2, int y2) {
+  return (x1==x2) && (y1==y2);
+}
 
 //x: 70 50 30 10
 //y: 10 10 10 10
