@@ -3,56 +3,72 @@ int[] y = new int[23];
 
 int[] food = new int[2];
 
-int lungime = 22;
+int lungime = 4;
 int direction = 3; // 0 - SUS, 1 - STANGA, 2 - JOS, 3 - DREAPTA
-
+boolean keyPressedByUser = false;
+int[] temporaryHead = new int[2];
 
 void setup() {
   size(1020, 760, P2D);
 
-  frameRate(4);
+  frameRate(10);
 
   for (int i=0; i<lungime; i++) {
     x[lungime-i-1] = 10+20*i;
     y[lungime-i-1] = 10;
   }
-  generateFood();
+  generateFoodWithoutCollision();
 }
 
 void draw() {
   background(0);
   
-  stroke(255);
-  for(int i = 0; i<51;i++) {
-    line(i*20, 0, i*20, height);
-  }
+  //stroke(255);
+  //for(int i = 0; i<51;i++) {
+  //  line(i*20, 0, i*20, height);
+  //}
   
-  for(int i = 0; i<38;i++) {
-    line(0, i*20, width, i*20);
-  }
+  //for(int i = 0; i<38;i++) {
+  //  line(0, i*20, width, i*20);
+  //}
   
-  stroke(0);
+  //stroke(0);
   
   //START MUTAT SARPE
+  
+  
+  switch(direction) {
+    case 0:
+      temporaryHead[1] = y[0]-20;
+      temporaryHead[0] = x[0];
+      break;
+    case 1:
+      temporaryHead[0] = x[0]-20;
+      temporaryHead[1] = y[0];
+      break;
+    case 2:
+      temporaryHead[1] = y[0]+20;
+      temporaryHead[0] = x[0];
+      break;
+    case 3:
+      temporaryHead[0] = x[0]+20;
+      temporaryHead[1] = y[0];
+      break;
+  }
+  
+  if(isCollision(temporaryHead[0],temporaryHead[1],food[0],food[1])) {
+    generateFoodWithoutCollision();
+    lungime+=1;
+  }
+  
   for (int i=lungime-2; i >= 0; i--) {
     x[i+1] = x[i];
     y[i+1] = y[i];
   }
+  println(temporaryHead[0],temporaryHead[1]);
+  x[0] = temporaryHead[0];
+  y[0] = temporaryHead[1];
 
-  switch(direction) {
-    case 0:
-      y[0]-=20;
-      break;
-    case 1:
-      x[0]-=20;
-      break;
-    case 2:
-      y[0]+=20;
-      break;
-    case 3:
-      x[0]+=20;
-      break;
-  }
   //END MUTAT SARPE
 
   //START DESENAT SARPE
@@ -69,9 +85,11 @@ void draw() {
   fill(255,0,0);
   circle(food[0],food[1],20);
   //END DESENAT SARPE
+  keyPressedByUser = false;
 }
 
 void keyPressed() {
+  if(keyPressedByUser) return;
   char myKey = key;
   if (myKey >= 'a' && key <= 'z') {
     myKey = (char)(myKey + 'A' - 'a');
@@ -94,6 +112,7 @@ void keyPressed() {
         direction = 3;
       break;
   }
+  keyPressedByUser = true;
 }
 
 void generateFood() {
@@ -108,13 +127,24 @@ void generateFood() {
 }
 
 void generateFoodWithoutCollision() {
-  boolean generateAgain;
+  boolean generateAgain = false;
   generateFood();
-  for(int i = 0; i <= lungime; i++) {
+  for(int i = 0; i < lungime; i++) {
     if(isCollision(x[i],y[i], food[0], food[1])) {
       generateAgain = true;
       break;
     } 
+  }
+  
+  while(generateAgain) {
+    generateAgain = false;
+    generateFood();
+    for(int i = 0; i < lungime; i++) {
+      if(isCollision(x[i],y[i], food[0], food[1])) {
+        generateAgain = true;
+        break;
+      } 
+    }
   }
   
 }
