@@ -1,7 +1,7 @@
-int[] x = new int[23];
-int[] y = new int[23];
+int[] x = new int[1000];
+int[] y = new int[1000];
 
-int[] food = new int[2];
+int[] food = new int[2]; //food[0], food[1]
 
 int scor;
 
@@ -13,7 +13,7 @@ int[] temporaryHead = new int[2];
 void setup() {
   size(1020, 760, P2D);
 
-  frameRate(3);
+  frameRate(13);
   textSize(20);
   
   scor = 0;
@@ -61,7 +61,13 @@ void draw() {
       break;
   }
   
+  //VERIFICAM AXA Y (SUS - JOS)
   if(temporaryHead[1] < 0) { temporaryHead[1] = height - 10; }
+  if(temporaryHead[1] > height) { temporaryHead[1] = 10; }
+  
+  //VERIFICAM AXA X (STANGA - DREAPTA)
+  if(temporaryHead[0] < 0) { temporaryHead[0] = width - 10; }
+  if(temporaryHead[0] > width) { temporaryHead[0] = 10; }
   
   //VERIFICAM DACA AM AJUNS CU CAPUL PE MANCARE
   if(isCollision(temporaryHead[0],temporaryHead[1],food[0],food[1])) {
@@ -74,7 +80,7 @@ void draw() {
     x[i+1] = x[i];
     y[i+1] = y[i];
   }
-  println(temporaryHead[0],temporaryHead[1]);
+
   x[0] = temporaryHead[0];
   y[0] = temporaryHead[1];
 
@@ -94,6 +100,14 @@ void draw() {
   fill(255,0,0);
   circle(food[0],food[1],20);
   //END DESENAT SARPE
+  
+  for(int i = 4; i < lungime; i++) {
+    if(isCollision(x[i],y[i], x[0], y[0])) {
+      //OPRIM JOCUL
+      scor = 0;
+      lungime = 4;
+    } 
+  }
   
   text(str(scor), 10, 20);
   keyPressedByUser = false;
