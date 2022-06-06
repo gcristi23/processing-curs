@@ -1,11 +1,12 @@
-int[] X = new int[23];
-int[] Y = new int[23];
+int[] X = new int[1000];
+int[] Y = new int[1000];
 int lungime = 5;
 
 int foodX;
 int foodY;
 
 int score;
+int speed = 6;
 
 int temporaryHeadX;
 int temporaryHeadY;
@@ -15,7 +16,7 @@ boolean isKeyPressed = false;
 
 void setup() {
   size(1020, 760, P2D);
-  frameRate(16);
+  frameRate(speed);
   
   score = 0;
   textSize(25);
@@ -36,23 +37,36 @@ void draw() {
   temporaryHeadY = Y[0];
   
   switch(direction) {
-  case 0:
-    temporaryHeadY-=20;
-    break;
-  case 1:
-    temporaryHeadX-=20;
-    break;
-  case 2:
-    temporaryHeadY+=20;
-    break;
-  case 3:
-    temporaryHeadX+=20;
-    break;
+    case 0:
+      temporaryHeadY-=20;
+      break;
+    case 1:
+      temporaryHeadX-=20;
+      break;
+    case 2:
+      temporaryHeadY+=20;
+      break;
+    case 3:
+      temporaryHeadX+=20;
+      break;
   }
+  
+  if(temporaryHeadX > width) temporaryHeadX = 10;
+  if(temporaryHeadX < 0) temporaryHeadX = width - 10;
+  
+  if(temporaryHeadY > height) temporaryHeadY = 10;
+  if(temporaryHeadY < 0) temporaryHeadY = height - 10;
   
   //VERIFICAM DACA MANANCA CEVA
   if(isCollision(temporaryHeadX,temporaryHeadY,foodX,foodY)) {
     score+=1;
+    if(score % 3 == 0) {
+      if (speed < 20) {
+        speed+=1;
+        frameRate(speed);
+      }
+    }
+    
     lungime+=1;
     generateFoodWithoutCollision();
   }
@@ -64,13 +78,12 @@ void draw() {
 
   X[0] = temporaryHeadX;
   Y[0] = temporaryHeadY;
-  
   //END MUTAT
 
   //START DESEN
   for (int i=0; i<lungime; i++) {
     if (i==0) {
-      fill(0, 0, 255);
+      fill(#03FCDD);
     } else {
       fill(255, 0, 0);
     }
@@ -80,9 +93,19 @@ void draw() {
   fill(0,255,0);
   circle(foodX,foodY,20);
   
-  
   text(str(score), 10, 25);
   //END DESEN
+  
+  //VERIFICA DACA A MURIT SARPELE
+  for(int i=4; i < lungime; i++){
+      if(isCollision(X[i],Y[i],X[0],Y[0])) {
+        score = 0;
+        lungime = 5;
+        speed = 6;
+        break;
+      }
+   }
+  
   isKeyPressed = false;
 }
 

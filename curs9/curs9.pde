@@ -3,6 +3,8 @@ int[] y = new int[23];
 
 int[] food = new int[2];
 
+int scor;
+
 int lungime = 4;
 int direction = 3; // 0 - SUS, 1 - STANGA, 2 - JOS, 3 - DREAPTA
 boolean keyPressedByUser = false;
@@ -11,8 +13,11 @@ int[] temporaryHead = new int[2];
 void setup() {
   size(1020, 760, P2D);
 
-  frameRate(10);
-
+  frameRate(3);
+  textSize(20);
+  
+  scor = 0;
+  
   for (int i=0; i<lungime; i++) {
     x[lungime-i-1] = 10+20*i;
     y[lungime-i-1] = 10;
@@ -56,9 +61,13 @@ void draw() {
       break;
   }
   
+  if(temporaryHead[1] < 0) { temporaryHead[1] = height - 10; }
+  
+  //VERIFICAM DACA AM AJUNS CU CAPUL PE MANCARE
   if(isCollision(temporaryHead[0],temporaryHead[1],food[0],food[1])) {
     generateFoodWithoutCollision();
     lungime+=1;
+    scor+=1;
   }
   
   for (int i=lungime-2; i >= 0; i--) {
@@ -85,6 +94,8 @@ void draw() {
   fill(255,0,0);
   circle(food[0],food[1],20);
   //END DESENAT SARPE
+  
+  text(str(scor), 10, 20);
   keyPressedByUser = false;
 }
 
